@@ -23,6 +23,7 @@ public class gwsdkSetDeviceWifi extends CordovaPlugin {
 
     private CallbackContext airLinkCallbackContext;
     private Context context;
+    private String _appId;
 
     private XPGWifiSDKListener wifiSDKListener = new XPGWifiSDKListener() {
         @Override
@@ -89,48 +90,25 @@ public class gwsdkSetDeviceWifi extends CordovaPlugin {
         super.initialize(cordova, webView);
         // your init code here
         context = cordova.getActivity().getApplicationContext();
+        _appId = null;
     }
 
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-//        if (action.equals("getCurrentSSID")) {
-//            this.getCurrentSSID(callbackContext);
-//            return true;
-//        }
         if (action.equals("setDeviceWifi")) {
-            this.setDeviceWifi(args.getString(0), args.getString(1), args.getString(2), callbackContext);
+            if(_appId == null){
+                _appId = args.getString(2);
+                XPGWifiSDK.sharedInstance().startWithAppID(context, appID);
+                XPGWifiSDK.sharedInstance().setListener(wifiSDKListener);
+            }
+            this.setDeviceWifi(args.getString(0), args.getString(1), callbackContext);
             return true;
         }
         return false;
     }
 
-//    private void getCurrentSSID(CallbackContext callbackContext) {
-//        try {
-//            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-//            String connectedSSID = wifiInfo.getSSID().replace("\"", "");
-//            if (connectedSSID != null && connectedSSID.length() > 0) {
-//                callbackContext.success(connectedSSID);
-//            } else {
-//                callbackContext.error("ssid is empty");
-//            }
-//        } catch (Exception e) {
-//            callbackContext.error(e.getMessage());
-//        }
-//    }
-
-    private void setDeviceWifi(String wifiSSID, String wifiKey, String appId, CallbackContext callbackContext) {
-        String appID = appId;//"b40af87e302b4415a374a9c2b1bb4bec";
-
-        XPGWifiSDK.sharedInstance().startWithAppID(context, appID);
-
-        // set listener
-        XPGWifiSDK.sharedInstance().setListener(wifiSDKListener);
-
-        // start sdk log;
-        //XPGWifiSDK.sharedInstance().setLogLevel(XPGWifiSDK.XPGWifiLogLevel.XPGWifiLogLevelAll, "error.txt", true);
-
+    private void setDeviceWifi(String wifiSSID, String wifiKey, CallbackContext callbackContext) {
         if (wifiSSID != null && wifiSSID.length() > 0 && wifiKey != null && wifiKey.length() > 0) {
             airLinkCallbackContext = callbackContext;
             XPGWifiSDK.sharedInstance().setDeviceWifi(wifiSSID, wifiKey, XPGWifiConfigureMode.XPGWifiConfigureModeAirLink, 180000);

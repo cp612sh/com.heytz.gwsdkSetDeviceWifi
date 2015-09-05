@@ -5,6 +5,7 @@
 
 @interface gwsdkSetDeviceWifi: CDVPlugin<XPGWifiSDKDelegate> {
     // Member variables go here.
+    NSString * _appId;
 }
 
 -(void)setDeviceWifi:(CDVInvokedUrlCommand *)command;
@@ -20,11 +21,24 @@
 -(void)pluginInitialize{
 }
 
+-(void)initSdkWithAppId{
+    if(!_appId){
+       _appId = command.arguments[2];
+       [XPGWifiSDK startWithAppID:_appId];
+    }
+}
+
+-(void) setDelegate{
+    if(!(XPGWifiSDK sharedInstance].delegate)){
+        [XPGWifiSDK sharedInstance].delegate = self;
+    }
+}
+
 -(void)setDeviceWifi:(CDVInvokedUrlCommand *)command
 {
+     [self initSdkWithAppId];
+     [self setDelegate];
 
-    [XPGWifiSDK startWithAppID:command.arguments[2]];
-    [XPGWifiSDK sharedInstance].delegate = self;
     /**
      * @brief 配置路由的方法
      * @param ssid：需要配置到路由的SSID名
@@ -64,7 +78,6 @@
                            device.productKey, @"productKey",
                            device.productName, @"productName",
                            device.remark, @"remark",
-                           //device.ui, @"ui",
                            device.isConnected, @"isConnected",
                            device.isDisabled, @"isDisabled",
                            device.isLAN, @"isLAN",
@@ -76,6 +89,13 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
     }
 }
+
+- (void)dealloc
+{
+    NSLog(@"//====dealloc...====");
+    [XPGWifiSDK sharedInstance].delegate = nil;
+}
+
 
 - (void)dispose{
     NSLog(@"//====disposed...====");
