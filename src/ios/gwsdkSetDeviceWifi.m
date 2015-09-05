@@ -21,24 +21,24 @@
 -(void)pluginInitialize{
 }
 
--(void)initSdkWithAppId{
+-(void)initSdkWithAppId:(CDVInvokedUrlCommand *) command{
     if(!_appId){
-       _appId = command.arguments[2];
-       [XPGWifiSDK startWithAppID:_appId];
+        _appId = command.arguments[2];
+        [XPGWifiSDK startWithAppID:_appId];
     }
 }
 
 -(void) setDelegate{
-    if(!(XPGWifiSDK sharedInstance].delegate)){
+    if(!([XPGWifiSDK sharedInstance].delegate)){
         [XPGWifiSDK sharedInstance].delegate = self;
     }
 }
 
 -(void)setDeviceWifi:(CDVInvokedUrlCommand *)command
 {
-     [self initSdkWithAppId];
-     [self setDelegate];
-
+    [self initSdkWithAppId:command];
+    [self setDelegate];
+    
     /**
      * @brief 配置路由的方法
      * @param ssid：需要配置到路由的SSID名
@@ -50,12 +50,12 @@
      */
     self.commandHolder = command;
     [[XPGWifiSDK sharedInstance] setDeviceWifi:command.arguments[0]
-    key:command.arguments[1]
-    mode:XPGWifiSDKAirLinkMode
-    softAPSSIDPrefix:nil timeout:59];
+                                           key:command.arguments[1]
+                                          mode:XPGWifiSDKAirLinkMode
+                              softAPSSIDPrefix:nil timeout:59];
 }
 
- /**
+/**
  * @brief 回调接口，返回设备配置的结果
  * @param device：已配置成功的设备
  * @param result：配置结果 成功 - 0 或 失败 - 1 如果配置失败，device为nil
