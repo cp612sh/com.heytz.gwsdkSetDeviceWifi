@@ -27,7 +27,7 @@
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml"></config-file>
         <source-file src="src/android/gwsdkSetDeviceWifi.java"
-                     target-dir="src/com/heytz/gwsdkSetDeviceWifi/gwsdkSetDeviceWifi/"/>
+                     target-dir="src/com/heytz/gwsdkSetDeviceWifi/"/>
         <!--<source-file src="libs/json-lib-2.4-jdk15.jar" target-dir="libs"/>-->
         <!--<source-file src="libs/XPGWiFiSDK.jar" target-dir="libs"/>-->
         <!--<source-file src="libs/lib.jar" target-dir="libs"/>-->
